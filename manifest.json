@@ -5,6 +5,6 @@
     "action": { "default_popup": "index.html" },
     "content_scripts": [{
         "js": ["src/content.jsx"],
-        "matches": ["<all_urls>"]
-      }]
-  }
+        "matches": ["https://*.google.com/"]
+        }]
+    }

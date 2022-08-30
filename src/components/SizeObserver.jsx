@@ -1,14 +1,27 @@
-import React,{useEffect,useState,useContext,createContext} from 'react'
-export let SizeContext = createContext('lolilol');
-let SizeObserver = ({children}) => { 
-let [width,setWidth] = useState(0);
-let [height,setHeight] = useState(0)
-useEffect(()=> 
-{setWidth(window.innerWidth) ;
-setHeight(window.innerHeight)},
- [width,height])
+import React,{useEffect,useState,createContext} from 'react'
+export let SizeContext = createContext(null);
 
-console.log(width,height)
+
+
+
+let SizeObserver = ({children}) => { 
+
+
+let [width,setWidth] = useState(0);
+let [height,setHeight] = useState(0);
+console.log(width)
+useEffect(()=> {
+setWidth(window.innerWidth) ;
+setHeight(window.innerHeight);
+},[width,height])
+
+
+
+
+ 
+
+
+
 
     return(
         <SizeContext.Provider value={{width,height}}>

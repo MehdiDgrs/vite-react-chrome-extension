@@ -2,8 +2,7 @@ import React, {useEffect,useContext} from 'react'
 import Draggable from 'react-draggable'
 import SizeContext from './SizeObserver.jsx'
 let  Modals = () => {
-let size = useContext(SizeContext)
-console.log(size)
+
 
 
     return(
