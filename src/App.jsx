@@ -13,13 +13,11 @@ function App() {
     console.log(request, sender, sendResponse);
     sendResponse("我收到你的消息了：" + JSON.stringify(request));
     setToggle(!toggle);
-    let picker = new EyeDropper();
-    picker.open();
   });
   let [toggle, setToggle] = useState(false);
   let [color, setColor] = useState(null);
   let [clicked, isClicked] = useState(false);
-  let picker = new EyeDropper();
+
   console.log(toggle);
   return (
     <SizeObserver>
