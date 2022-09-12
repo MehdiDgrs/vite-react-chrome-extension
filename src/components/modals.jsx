@@ -2,14 +2,23 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import Draggable from "react-draggable";
 import { SizeContext } from "./SizeObserver.jsx";
 import rgbToHsl from "rgb-to-hsl";
-
-let Modals = () => {
+import { ImCross } from "react-icons/im";
+import { TiPipette } from "react-icons/ti";
+import { IconContext } from "react-icons";
+let Modals = ({ closeModal }) => {
   let [hex, setHex] = useState(0);
   let [RGB, setRGB] = useState(0);
   let [HSL, setHSL] = useState(0);
+  let [copiedToClipBoard, setCopiedToClipBoard] = useState(false);
+  let [colorPicked, setColorPicked] = useState(false);
+  let [tipsActivated, setTipsActivated] = useState(false);
   let picker = new EyeDropper();
 
-  let { width, height } = useContext(SizeContext);
+  let { width, height, distanceTop } = useContext(SizeContext);
+
+  let showTips = () => {
+    setTipsActivated(true);
+  };
 
   let convertToRGB = (hex) => {
     let regex = /.{1,2}/g;
@@ -51,34 +60,94 @@ let Modals = () => {
     }
   }, [hex]);
   useEffect(() => {
+    console.log(distanceTop);
     let root = document.getElementById("crx-root");
     root.style.width = `${width}` + "px";
+    root.style.top = `${distanceTop}` + "px";
     console.log(root);
-  }, [width, height]);
+  }, [width, height, distanceTop]);
   return (
     <Draggable>
-      <div className=" bg-yellow-300 p-6 rounded-md  m-auto my-5 flex text-center  justify-around  w-1/2 h-full">
-        <div id="hex" className="flex ">
-          <span className="mx-4 bg-white">Hex : </span>
-          <div className="mx-4 bg-white">{hex}</div>
+      <div className="cursor-move drop-shadow-lg bg-yellow-300 p-6 rounded-md flex-col justify-around m-auto my-5  text-center  font-bold   w-3/4 h-full">
+        <div id="top-wrapper">
+          <div
+            id="codes"
+            className={`${
+              colorPicked ? "flex" : "hidden"
+            } justify-around w-3/4 mx-auto`}
+          >
+            <div id="hex" className="flex flex-col justify-between z-50 ">
+              <span>HEX </span>
+              <div
+                onClick={(e) => {
+                  console.log(e);
+                  e.stopPropagation();
+                }}
+              >
+                {hex}
+              </div>
+            </div>
+            <div>
+              <span>RGB </span>
+              <div>{RGB} </div>
+            </div>
+            <div id="HSL">
+              <span>HSL </span>
+              <div>{HSL} </div>
+            </div>
+          </div>
+
+          <IconContext.Provider
+            value={{
+              className: `cursor-pointer animate-bounce`,
+              size: `${colorPicked ? "2em" : "5em"}`,
+            }}
+          >
+            <div
+              id="pipette"
+              className="flex justify-center content-center my-5 "
+            >
+              {" "}
+              <TiPipette
+                onClick={() => {
+                  showTips();
+                  picker
+                    .open()
+                    .then(({ sRGBHex }) => {
+                      setHex(sRGBHex.toUpperCase());
+                      setColorPicked(true);
+                      setTipsActivated(false);
+                      return sRGBHex;
+                    })
+                    .then((sRGBHex) => {
+                      navigator.clipboard.writeText(sRGBHex.toUpperCase()).then(
+                        () => {
+                          setCopiedToClipBoard(true);
+                        },
+                        () => {
+                          console.log("fail");
+                        }
+                      );
+                    });
+                }}
+              />
+            </div>
+          </IconContext.Provider>
         </div>
-        <div id="Rgb" className="flex ">
-          <span className="mx-4 bg-white">RGB :</span>
-          <div className="mx-4 bg-white">{RGB} </div>
+        <div id="bottom-wrapper">
+          <div className="font-light">
+            {copiedToClipBoard ? "HEX code copied to clipboard" : " "}
+            {tipsActivated
+              ? "You can pick colors outside of the window ! "
+              : " "}
+          </div>
+          <div
+            className="cursor-pointer fixed top-3 right-3"
+            onClick={closeModal}
+          >
+            {<ImCross />}
+          </div>
         </div>
-        <div id="HSL" className="mx-4 bg-white">
-          <span className="mx-4 bg-white">HSL :</span>
-          <div className="mx-4 bg-white">{HSL} </div>
-        </div>
-        <button
-          onClick={() =>
-            picker.open().then(({ sRGBHex }) => {
-              setHex(sRGBHex);
-            })
-          }
-        >
-          click me
-        </button>
       </div>
     </Draggable>
   );

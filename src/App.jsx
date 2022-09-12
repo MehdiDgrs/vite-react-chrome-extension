@@ -18,10 +18,12 @@ function App() {
   let [color, setColor] = useState(null);
   let [clicked, isClicked] = useState(false);
 
-  console.log(toggle);
+  let closeModal = () => {
+    setToggle(false);
+  };
   return (
     <SizeObserver>
-      {toggle ? <Modals /> : null}
+      {toggle ? <Modals closeModal={closeModal} /> : null}
       {/*
 
      

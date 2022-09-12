@@ -4,15 +4,20 @@ export let SizeContext = createContext(null);
 let SizeObserver = ({ children }) => {
   let [width, setWidth] = useState(0);
   let [height, setHeight] = useState(0);
+  let [distanceTop, setDistanceTop] = useState(0);
   console.log(width);
   useEffect(() => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
-  }, [width, height]);
+    window.addEventListener("scroll", () => {
+      setDistanceTop(window.pageYOffset);
+    });
+    console.log(distanceTop);
+  }, [width, height, distanceTop]);
 
   return (
     <>
-      <SizeContext.Provider value={{ width, height }}>
+      <SizeContext.Provider value={{ width, height, distanceTop }}>
         {children}
       </SizeContext.Provider>
     </>
