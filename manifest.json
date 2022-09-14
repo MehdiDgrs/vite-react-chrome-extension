@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "CRXJS React Vite Example",
+    "name": "Screen Color Picker",
     "version": "1.0.0",
-    "action": { "default_title": "click" },
+    "action": { "default_title": "Pick a color from your screen" },
    
         "permissions": ["activeTab", "scripting"],
         "background": {
@@ -16,7 +16,16 @@
        
             
           }
-        ]
+        ],
+        "icons": {
+          "16":"16pipe.png",
+          "48":"48pipe.png",
+          "128":"128pipe.png"
+
+        },
+       
+        "description" :"An extension to pick the RGB,HEX,and HSL code from ANYWHERE on your screen" 
+        
     }
        
     

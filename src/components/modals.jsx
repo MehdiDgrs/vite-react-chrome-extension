@@ -12,10 +12,28 @@ let Modals = ({ closeModal }) => {
   let [copiedToClipBoard, setCopiedToClipBoard] = useState(false);
   let [colorPicked, setColorPicked] = useState(false);
   let [tipsActivated, setTipsActivated] = useState(false);
+  let [selectedCode, setSelectedCode] = useState(null);
   let picker = new EyeDropper();
 
   let { width, height, distanceTop } = useContext(SizeContext);
 
+  let selectCode = (event) => {
+    let selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      selection.removeAllRanges();
+    }
+    let range = document.createRange();
+    range.selectNode(event.target);
+    selection.addRange(range);
+    navigator.clipboard.writeText(selection.toString()).then(
+      () => {
+        setSelectedCode(selection.toString());
+      },
+      () => {
+        console.log("fail");
+      }
+    );
+  };
   let showTips = () => {
     setTipsActivated(true);
   };
@@ -64,7 +82,7 @@ let Modals = ({ closeModal }) => {
     let root = document.getElementById("crx-root");
     root.style.width = `${width}` + "px";
     root.style.top = `${distanceTop}` + "px";
-    console.log(root);
+    let topDiv = document.getElementById("top-wrapper");
   }, [width, height, distanceTop]);
   return (
     <Draggable>
@@ -79,9 +97,9 @@ let Modals = ({ closeModal }) => {
             <div id="hex" className="flex flex-col justify-between z-50 ">
               <span>HEX </span>
               <div
+                className="cursor-pointer"
                 onClick={(e) => {
-                  console.log(e);
-                  e.stopPropagation();
+                  selectCode(e);
                 }}
               >
                 {hex}
@@ -89,11 +107,24 @@ let Modals = ({ closeModal }) => {
             </div>
             <div>
               <span>RGB </span>
-              <div>{RGB} </div>
+              <div
+                className="cursor-pointer"
+                onClick={(e) => {
+                  selectCode(e);
+                }}
+              >
+                {RGB}{" "}
+              </div>
             </div>
-            <div id="HSL">
+            <div id="HSL" className="cursor-pointer">
               <span>HSL </span>
-              <div>{HSL} </div>
+              <div
+                onClick={(e) => {
+                  selectCode(e);
+                }}
+              >
+                {HSL}{" "}
+              </div>
             </div>
           </div>
 
@@ -115,8 +146,10 @@ let Modals = ({ closeModal }) => {
                     .open()
                     .then(({ sRGBHex }) => {
                       setHex(sRGBHex.toUpperCase());
+                      setSelectedCode(null);
                       setColorPicked(true);
                       setTipsActivated(false);
+
                       return sRGBHex;
                     })
                     .then((sRGBHex) => {
@@ -135,11 +168,28 @@ let Modals = ({ closeModal }) => {
           </IconContext.Provider>
         </div>
         <div id="bottom-wrapper">
-          <div className="font-light">
-            {copiedToClipBoard ? "HEX code copied to clipboard" : " "}
-            {tipsActivated
-              ? "You can pick colors outside of the window ! "
+          <div className="font-light text-base mb-3">
+            {copiedToClipBoard && !tipsActivated
+              ? `${selectedCode ? selectedCode : "Hex"}  copied to clipboard`
               : " "}
+            {tipsActivated
+              ? "You can pick colors outside of the browser window ! "
+              : " "}
+          </div>
+          <div
+            className={`${
+              copiedToClipBoard && !tipsActivated ? "block" : "hidden"
+            } font-light text-sm`}
+          >
+            Did you find this extension useful? You can pay me a{" "}
+            <a
+              href="https://ko-fi.com/obelisk59"
+              className="text-pink-400 cursor-pointer font-bold "
+              target="_blank"
+            >
+              ko-fi
+            </a>{" "}
+            if you want{" "}
           </div>
           <div
             className="cursor-pointer fixed top-3 right-3"
